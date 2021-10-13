@@ -1,5 +1,7 @@
 package br.com.treinaweb.ediaristas.controllers;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.com.treinaweb.ediaristas.models.Diarista;
 import br.com.treinaweb.ediaristas.repositories.DiaristaRepository;
+import br.com.treinaweb.ediaristas.services.FileService;
 
 @Controller
 @RequestMapping("/admin/diaristas") //endpoint para acessar esse controller
@@ -20,6 +25,9 @@ public class DiaristaController {
 
     @Autowired
     private DiaristaRepository repository;
+
+    @Autowired
+    private FileService fileService;
 
     @GetMapping // /admin/diaristas - com isso essa action ja eh acessada
     public ModelAndView listar(){
@@ -40,13 +48,13 @@ public class DiaristaController {
     }
 
     @PostMapping("/cadastrar")
-    public String cadastrar(@Valid Diarista diarista, BindingResult result){
-
+    public String cadastrar(@RequestParam MultipartFile imagem, @Valid Diarista diarista, BindingResult result) throws IOException{
         if(result.hasErrors()){
             return "admin/diaristas/form";        
         }
-
         //injencao de dependencias:
+        var filename = fileService.salvar(imagem);
+        diarista.setFoto(filename);
         repository.save(diarista);
 
         return "redirect:/admin/diaristas";
@@ -62,7 +70,20 @@ public class DiaristaController {
     }
 
     @PostMapping("/{id}/editar")
-    public String editar(@PathVariable Long id, @Valid Diarista diarista){
+    public String editar(@RequestParam MultipartFile imagem, @PathVariable Long id, @Valid Diarista diarista, BindingResult result) throws IOException{ //BindingResult deve vir após o dado que vai ser validado
+        if(result.hasErrors()){
+            return "admin/diaristas/form";        
+        }
+
+        var diaristaAtual = repository.getById(id);
+
+        if(imagem.isEmpty()){ //nao ha edicao de imagem
+            diarista.setFoto(diaristaAtual.getFoto());
+        } else{ 
+            var filename = fileService.salvar(imagem);
+            diarista.setFoto(filename);
+        }
+        
         repository.save(diarista);
 
         return "redirect:/admin/diaristas";

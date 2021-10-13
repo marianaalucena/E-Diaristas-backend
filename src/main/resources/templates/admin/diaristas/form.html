@@ -3,7 +3,7 @@
   <body>
     <main>
       <h1>Cadastro de Diarista</h1>
-      <form method="POST" th:object="${diarista}">
+      <form method="POST" th:object="${diarista}" enctype="multipart/form-data">
         <div class="mb-3">
           <label class="form-label" for="nomeCompleto">Nome Completo</label>
           <input class="form-control" type="text" th:field="*{nomeCompleto}" />
@@ -17,7 +17,12 @@
 
         <div class="mb-3">
           <label class="form-label" for="cpf">CPF</label>
-          <input class="form-control" type="text" th:field="*{cpf}" />
+          <input
+            data-mask="000.000.000-00"
+            class="form-control"
+            type="text"
+            th:field="*{cpf}"
+          />
           <ul>
             <li
               th:each="erro : ${#fields.errors('cpf')}"
@@ -39,7 +44,12 @@
 
         <div class="mb-3">
           <label class="form-label" for="telefone">Telefone</label>
-          <input class="form-control" type="text" th:field="*{telefone}" />
+          <input
+            data-mask="(00) 00000-0000"
+            class="form-control"
+            type="text"
+            th:field="*{telefone}"
+          />
           <ul>
             <li
               th:each="erro : ${#fields.errors('telefone')}"
@@ -94,7 +104,12 @@
 
         <div class="mb-3">
           <label class="form-label" for="cep">CEP</label>
-          <input class="form-control" type="text" th:field="*{cep}" />
+          <input
+            data-mask="00000-000"
+            class="form-control"
+            type="text"
+            th:field="*{cep}"
+          />
           <ul>
             <li
               th:each="erro : ${#fields.errors('cep')}"
@@ -134,6 +149,11 @@
               th:text="${erro}"
             ></li>
           </ul>
+        </div>
+
+        <div class="mb-3">
+          <label for="imagem" class="for-label">Foto</label>
+          <input type="file" class="form-control" id="imagem" name="imagem" />
         </div>
 
         <button class="btn btn-success" type="submit">Salvar</button>

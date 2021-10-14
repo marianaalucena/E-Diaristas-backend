@@ -18,16 +18,21 @@ import org.springframework.web.servlet.ModelAndView;
 import br.com.treinaweb.ediaristas.models.Diarista;
 import br.com.treinaweb.ediaristas.repositories.DiaristaRepository;
 import br.com.treinaweb.ediaristas.services.FileService;
+import br.com.treinaweb.ediaristas.services.ViaCepService;
 
 @Controller
 @RequestMapping("/admin/diaristas") //endpoint para acessar esse controller
 public class DiaristaController {
 
+    //Injecao de dependencias, todos os @Autowired
     @Autowired
     private DiaristaRepository repository;
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private ViaCepService viaCepService;
 
     @GetMapping // /admin/diaristas - com isso essa action ja eh acessada
     public ModelAndView listar(){
@@ -55,6 +60,12 @@ public class DiaristaController {
         //injencao de dependencias:
         var filename = fileService.salvar(imagem);
         diarista.setFoto(filename);
+
+        var cep = diarista.getCep();
+        var endereco = viaCepService.buscarEnderecoPorCep(cep);
+        var codigoIbge = endereco.getIbge();
+        diarista.setCodigoIbge(codigoIbge);
+
         repository.save(diarista);
 
         return "redirect:/admin/diaristas";
@@ -83,6 +94,11 @@ public class DiaristaController {
             var filename = fileService.salvar(imagem);
             diarista.setFoto(filename);
         }
+
+        var cep = diarista.getCep();
+        var endereco = viaCepService.buscarEnderecoPorCep(cep);
+        var codigoIbge = endereco.getIbge();
+        diarista.setCodigoIbge(codigoIbge);
         
         repository.save(diarista);
 

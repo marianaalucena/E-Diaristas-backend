@@ -7,7 +7,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import br.com.treinaweb.ediaristas.models.Diarista;
 import br.com.treinaweb.ediaristas.repositories.DiaristaRepository;
 import br.com.treinaweb.ediaristas.services.FileService;
 import br.com.treinaweb.ediaristas.services.ViaCepService;
+import br.com.treinaweb.ediaristas.validators.CepValidator;
 
 @Controller
 @RequestMapping("/admin/diaristas") //endpoint para acessar esse controller
@@ -33,6 +36,14 @@ public class DiaristaController {
 
     @Autowired
     private ViaCepService viaCepService;
+
+    @Autowired
+    private CepValidator cepValidator;
+
+    @InitBinder("diarista")
+    private void initBinder(WebDataBinder binder){
+        binder.addValidators(cepValidator);
+    }
 
     @GetMapping // /admin/diaristas - com isso essa action ja eh acessada
     public ModelAndView listar(){

@@ -11,6 +11,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.hibernate.validator.constraints.br.CPF;
 
 import br.com.treinaweb.ediaristas.converters.CepConverter;
@@ -36,6 +39,7 @@ public class Diarista {
     @NotNull
     @Size(min = 3, max = 100)
     @Column(nullable = false, length = 100) //nullable: nome obrigatorio
+    @JsonProperty("nome_completo") //nomenclatura que esse campo é esperado no frontend
     private String nomeCompleto;
 
     @NotNull
@@ -43,42 +47,50 @@ public class Diarista {
     @CPF
     @Column(nullable = false, unique = true, length = 11)
     @Convert(converter = CpfConverter.class)
+    @JsonIgnore //para que na requisicao da API esse campo nao seja enviado, ja que o front nao precisa dessa info
     private String cpf;
 
     @NotNull
     @NotEmpty
     @Email
     @Column(nullable = false, unique = true) //unico
+    @JsonIgnore
     private String email;
 
     @NotNull
     @Size(min = 11, max = 15)
     @Column(nullable = false, length = 11)
     @Convert(converter = TelefoneConverter.class)
+    @JsonIgnore
     private String telefone;
 
     @NotNull
     @NotEmpty
     @Column(nullable = false)
+    @JsonIgnore
     private String logradouro;
 
     @NotNull
     @NotEmpty
     @Column(nullable = false)
+    @JsonIgnore
     private String numero;
 
     @NotNull
     @NotEmpty
     @Column(nullable = false)
+    @JsonIgnore
     private String bairro;
 
     @Column(nullable = true)
+    @JsonIgnore
     private String complemento;
 
     @NotNull
     @Size(min = 8, max = 9)
     @Column(nullable = false, length = 8)
     @Convert(converter = CepConverter.class)
+    @JsonIgnore
     private String cep;
 
     @NotNull
@@ -89,9 +101,11 @@ public class Diarista {
     @NotNull
     @Size(min = 2, max = 2)
     @Column(nullable = false, length = 2)
+    @JsonIgnore
     private String estado;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String codigoIbge;
 
     @Column(nullable = false)
